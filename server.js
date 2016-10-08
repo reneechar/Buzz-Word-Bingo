@@ -5,8 +5,6 @@ const indexHTML = require('./routes/index.js');
 
 const PORT = 3000;
 
-const buzzWords = {};
-
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static('public'));

@@ -10,7 +10,9 @@ router.get('/buzzwords', (req,res) => {
 
 router.post('/buzzword', (req,res) => {
 	let success = false;
-	if (scores.doesNotExist(req.body.buzzWord)) {
+	
+	//if the word is not already in the list and the list is still less than the max length of 5, add new word in to list
+	if (scores.doesNotExist(req.body.buzzWord) && scores.getBuzzWords().length < 5) {
 		scores.createNewBuzzObj(req.body.buzzWord,req.body.points);
 		success = true;	
 	} 

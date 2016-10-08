@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const scores = require('./scores.js');
+const scores = require('../scores.js');
 
 
 router.get('/buzzwords', (req,res) => {

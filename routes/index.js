@@ -1,58 +1,17 @@
 const express = require('express');
 const router = express.Router();
-
-let buzzWordsArr = [];
-let score = 0;
-
-
-function createNewBuzzObj(buzzWord,points) {
-	let newBuzzWordTemplate = {
-		buzzWord,
-		points,
-		heard: false
-	}
-	return newBuzzWordTemplate;
-}
-
-function doesNotExist(word) {
-	if (buzzWordsArr.length > 0) {
-		return buzzWordsArr.every(obj => {
-			return obj.buzzWord !== word;
-		});	
-	} else {
-		return true;
-	}
-}
-
-function removeBuzzObj(word) {
-	return buzzWordsArr.filter(buzzObjs => {
-		return buzzObjs.buzzWord !== word;
-	});
-}
-
-function heard(word) {
-	buzzWordsArr = buzzWordsArr.map(buzzObjs => {
-		if (buzzObjs.buzzWord === word) {
-			score += parseInt(buzzObjs.points);
-			buzzObjs.heard = true;
-		}
-		return buzzObjs;
-	})	
-}
+const scores = require('./scores.js');
 
 
 router.get('/buzzwords', (req,res) => {
-	res.json({
-		"buzzWords" : buzzWordsArr.map(buzzObjs => {
-			return buzzObjs.buzzWord
-		})
-	})
+	let buzzWords = scores.getBuzzWords();
+	res.json({buzzWords})
 })
 
 router.post('/buzzword', (req,res) => {
 	let success = false;
-	if (doesNotExist(req.body.buzzWord)) {
-		buzzWordsArr.push(createNewBuzzObj(req.body.buzzWord,req.body.points));
+	if (scores.doesNotExist(req.body.buzzWord)) {
+		scores.createNewBuzzObj(req.body.buzzWord,req.body.points);
 		success = true;	
 	} 
 	res.json({success})
@@ -61,14 +20,14 @@ router.post('/buzzword', (req,res) => {
 router.put('/buzzword', (req,res) => {
 	let success = false;
 
-	if(doesNotExist(req.body.buzzWord)) {
+	if(scores.doesNotExist(req.body.buzzWord)) {
 		res.json({success})
 	} else {
-		heard(req.body.buzzWord);
+		scores.heard(req.body.buzzWord);
 		success = true;
 		res.json({
 			success,
-			newScore: score
+			newScore: scores.getScore()
 		})
 	}
 })
@@ -76,10 +35,8 @@ router.put('/buzzword', (req,res) => {
 router.delete('/buzzword', (req,res) => {
 	let success = false;
 
-	if(doesNotExist(req.body.buzzWord)) {
-
-	} else {
-		buzzWordsArr = removeBuzzObj(req.body.buzzWord);
+	if(!scores.doesNotExist(req.body.buzzWord)) {
+		scores.removeBuzzObj(req.body.buzzWord);
 		success = true;
 	}
 	res.json({success})
@@ -88,8 +45,7 @@ router.delete('/buzzword', (req,res) => {
 router.post('/reset', (req,res) => {
 	let success = false;
 	if(req.body.reset) {
-		score = 0;
-		buzzWordsArr = [];
+		scores.resetGame();
 		success = true;	
 	} 
 	res.json({success})

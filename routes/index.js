@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
-const buzzWordsArr = [];
+let buzzWordsArr = [];
+let score = 0;
 
 function createNewBuzzObj(buzzWord,points) {
 	let newBuzzWordTemplate = {
@@ -9,7 +10,29 @@ function createNewBuzzObj(buzzWord,points) {
 		points,
 		heard: false
 	}
-	buzzWordsArr.push(newBuzzWordTemplate);
+	return newBuzzWordTemplate;
+}
+
+function doesNotExist(arr, word) {
+	if (arr.length > 0) {
+		return arr.every(arr => {
+			return arr.buzzWord !== word;
+		});	
+	} else {
+		return true;
+	}
+}
+
+function removeBuzzObj(word) {
+	return buzzWordsArr.filter(buzzObjs => {
+		console.log('1',buzzObjs.buzzWord);
+		console.log('2',word);
+		return buzzObjs.buzzWord !== word;
+	});
+}
+
+function resetBuzzArr() {
+	buzzWordsArr = [];
 }
 
 
@@ -22,18 +45,9 @@ router.get('/buzzwords', (req,res) => {
 })
 
 router.post('/buzzword', (req,res) => {
-	let isNew;
 
-	if (buzzWordsArr.length > 0) {
-		isNew = buzzWordsArr.every(buzzObjs => {
-			return buzzObjs.buzzWord !== req.body.buzzWord 
-		})
-	} else {
-		isNew = true;
-	}
-
-	if (isNew) {
-		createNewBuzzObj(req.body.buzzWord,req.body.points);
+	if (doesNotExist(buzzWordsArr,req.body.buzzWord)) {
+		buzzWordsArr.push(createNewBuzzObj(req.body.buzzWord,req.body.points));
 		res.json({
 			success: true
 		})		
@@ -45,5 +59,25 @@ router.post('/buzzword', (req,res) => {
 	
 })
 
+router.put('/buzzword', (req,res) => {
+
+})
+
+router.delete('/buzzword', (req,res) => {
+	if(doesNotExist(buzzWordsArr,req.body.buzzWord)) {
+		res.json({
+			success: false
+		})
+	} else {
+		buzzWordsArr = removeBuzzObj(req.body.buzzWord);
+		res.json({
+			success: true
+		})
+	}
+})
+
+router.post('/reset', (req,res) => {
+
+})
 
 module.exports = router;

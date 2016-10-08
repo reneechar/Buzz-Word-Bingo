@@ -13,10 +13,10 @@ function createNewBuzzObj(buzzWord,points) {
 	return newBuzzWordTemplate;
 }
 
-function doesNotExist(arr, word) {
-	if (arr.length > 0) {
-		return arr.every(arr => {
-			return arr.buzzWord !== word;
+function doesNotExist(word) {
+	if (buzzWordsArr.length > 0) {
+		return buzzWordsArr.every(obj => {
+			return obj.buzzWord !== word;
 		});	
 	} else {
 		return true;
@@ -50,7 +50,7 @@ router.get('/buzzwords', (req,res) => {
 
 router.post('/buzzword', (req,res) => {
 
-	if (doesNotExist(buzzWordsArr,req.body.buzzWord)) {
+	if (doesNotExist(req.body.buzzWord)) {
 		buzzWordsArr.push(createNewBuzzObj(req.body.buzzWord,req.body.points));
 		res.json({
 			success: true
@@ -64,7 +64,7 @@ router.post('/buzzword', (req,res) => {
 })
 
 router.put('/buzzword', (req,res) => {
-	if(doesNotExist(buzzWordsArr,req.body.buzzWord)) {
+	if(doesNotExist(req.body.buzzWord)) {
 		res.json({
 			success: false
 		})
@@ -78,7 +78,7 @@ router.put('/buzzword', (req,res) => {
 })
 
 router.delete('/buzzword', (req,res) => {
-	if(doesNotExist(buzzWordsArr,req.body.buzzWord)) {
+	if(doesNotExist(req.body.buzzWord)) {
 		res.json({
 			success: false
 		})

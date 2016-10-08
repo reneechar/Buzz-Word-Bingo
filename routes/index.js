@@ -4,6 +4,7 @@ const router = express.Router();
 let buzzWordsArr = [];
 let score = 0;
 
+
 function createNewBuzzObj(buzzWord,points) {
 	let newBuzzWordTemplate = {
 		buzzWord,
@@ -49,59 +50,49 @@ router.get('/buzzwords', (req,res) => {
 })
 
 router.post('/buzzword', (req,res) => {
-
+	let success = false;
 	if (doesNotExist(req.body.buzzWord)) {
 		buzzWordsArr.push(createNewBuzzObj(req.body.buzzWord,req.body.points));
-		res.json({
-			success: true
-		})		
-	} else {
-		res.json({
-			success: false,
-		})
-	}
-	
+		success = true;	
+	} 
+	res.json({success})
 })
 
 router.put('/buzzword', (req,res) => {
+	let success = false;
+
 	if(doesNotExist(req.body.buzzWord)) {
-		res.json({
-			success: false
-		})
+		res.json({success})
 	} else {
 		heard(req.body.buzzWord);
+		success = true;
 		res.json({
-			success: true,
+			success,
 			newScore: score
 		})
 	}
 })
 
 router.delete('/buzzword', (req,res) => {
+	let success = false;
+
 	if(doesNotExist(req.body.buzzWord)) {
-		res.json({
-			success: false
-		})
+
 	} else {
 		buzzWordsArr = removeBuzzObj(req.body.buzzWord);
-		res.json({
-			success: true,
-		})
+		success = true;
 	}
+	res.json({success})
 })
 
 router.post('/reset', (req,res) => {
+	let success = false;
 	if(req.body.reset) {
 		score = 0;
 		buzzWordsArr = [];
-		res.json({
-			"success": true
-		})
-	} else {
-		res.json({
-			"success": false
-		})
-	}
+		success = true;	
+	} 
+	res.json({success})
 })
 
 module.exports = router;

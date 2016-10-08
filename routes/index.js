@@ -31,8 +31,14 @@ function removeBuzzObj(word) {
 	});
 }
 
-function resetBuzzArr() {
-	buzzWordsArr = [];
+function heard(word) {
+	buzzWordsArr = buzzWordsArr.map(buzzObjs => {
+		if (buzzObjs.buzzWord === word) {
+			score += parseInt(buzzObjs.points);
+			buzzObjs.heard = true;
+		}
+		return buzzObjs;
+	})	
 }
 
 
@@ -60,7 +66,17 @@ router.post('/buzzword', (req,res) => {
 })
 
 router.put('/buzzword', (req,res) => {
-
+	if(doesNotExist(buzzWordsArr,req.body.buzzWord)) {
+		res.json({
+			success: false
+		})
+	} else {
+		heard(req.body.buzzWord);
+		res.json({
+			success: true,
+			newScore: score
+		})
+	}
 })
 
 router.delete('/buzzword', (req,res) => {
@@ -71,7 +87,7 @@ router.delete('/buzzword', (req,res) => {
 	} else {
 		buzzWordsArr = removeBuzzObj(req.body.buzzWord);
 		res.json({
-			success: true
+			success: true,
 		})
 	}
 })

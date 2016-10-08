@@ -93,7 +93,17 @@ router.delete('/buzzword', (req,res) => {
 })
 
 router.post('/reset', (req,res) => {
-
+	if(req.body.reset) {
+		score = 0;
+		buzzWordsArr = [];
+		res.json({
+			"success": true
+		})
+	} else {
+		res.json({
+			"success": false
+		})
+	}
 })
 
 module.exports = router;

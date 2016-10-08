@@ -25,8 +25,6 @@ function doesNotExist(arr, word) {
 
 function removeBuzzObj(word) {
 	return buzzWordsArr.filter(buzzObjs => {
-		console.log('1',buzzObjs.buzzWord);
-		console.log('2',word);
 		return buzzObjs.buzzWord !== word;
 	});
 }
